@@ -38,6 +38,7 @@ Supported platforms:
 - [x] Windows ([MSVC](https://github.com/ggml-org/whisper.cpp/blob/master/.github/workflows/build.yml#L117-L144) and [MinGW](https://github.com/ggml-org/whisper.cpp/issues/168))
 - [x] [Raspberry Pi](https://github.com/ggml-org/whisper.cpp/discussions/166)
 - [x] [Docker](https://github.com/ggml-org/whisper.cpp/pkgs/container/whisper.cpp)
+- [x] **[reCamera RISC-V (Seeed Studio)](#recamera-risc-v-support)** - Cross-compilation support for SG2002 RISC-V platform
 
 The entire high-level implementation of the model is contained in [whisper.h](include/whisper.h) and [whisper.cpp](src/whisper.cpp).
 The rest of the code is part of the [`ggml`](https://github.com/ggml-org/ggml) machine learning library.
@@ -127,6 +128,88 @@ make -j large-v2
 make -j large-v3
 make -j large-v3-turbo
 ```
+
+## reCamera RISC-V Support
+
+This fork includes specialized support for the **Seeed Studio reCamera** (SG2002 RISC-V platform), enabling efficient speech recognition on embedded RISC-V devices.
+
+### Prerequisites
+
+- reCamera development environment with RISC-V toolchain
+- Cross-compilation setup following [Seeed Studio reCamera documentation](https://wiki.seeedstudio.com/reCamera/)
+- RISC-V GCC toolchain: `riscv64-unknown-linux-musl`
+
+### Quick Build for reCamera
+
+Three build scripts are provided for different optimization levels:
+
+1. **Basic CPU build** (recommended for compatibility):
+```bash
+./build-whisper-basic.sh
+```
+
+2. **Simple optimizations**:
+```bash
+./build-whisper-simple.sh
+```
+
+3. **Advanced RISC-V optimizations** (may require newer toolchain):
+```bash
+./build-whisper-riscv.sh
+```
+
+### Environment Setup
+
+Set your reCamera password for automatic deployment:
+```bash
+export RECAMERA_PASSWORD="your_password"
+```
+
+The build scripts will automatically:
+- Cross-compile whisper.cpp for RISC-V64
+- Deploy binaries to reCamera device (`192.168.42.1`)
+- Provide usage instructions
+
+### reCamera Usage
+
+After deployment, on your reCamera device:
+
+1. **Download a model**:
+```bash
+wget -O /tmp/ggml-tiny.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin
+```
+
+2. **Transcribe audio**:
+```bash
+/tmp/whisper-main -m /tmp/ggml-tiny.bin -f /path/to/audio.wav
+```
+
+3. **Run HTTP server**:
+```bash
+/tmp/whisper-server -m /tmp/ggml-tiny.bin --port 8080
+```
+
+### Model Recommendations for reCamera
+
+For optimal performance on the SG2002's limited resources:
+
+| Model | Memory | Speed | Quality |
+|-------|--------|--------|---------|
+| tiny  | ~273MB | Fastest | Basic |
+| base  | ~388MB | Good | Better |
+| small | ~852MB | Slower | Best (if memory allows) |
+
+**Recommended**: Start with `tiny` model for testing, upgrade to `base` for production use.
+
+### Integration with reCamera Ecosystem
+
+This whisper.cpp port works seamlessly with:
+- [reCamera ncurses 6.4](https://github.com/Toastee0/ncurses) - Modern terminal interface
+- [reCamera nano editor](https://github.com/Toastee0/nano) - Text editing capabilities
+- Standard reCamera development workflow
+
+For complete reCamera development setup, place this repository in your reCamera development environment folder alongside the SDK.
+
 
 ## Memory usage
 
