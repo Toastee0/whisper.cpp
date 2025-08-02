@@ -204,11 +204,14 @@ For optimal performance on the SG2002's limited resources:
 ### Integration with reCamera Ecosystem
 
 This whisper.cpp port works seamlessly with:
+- [reCamera ggml fork](https://github.com/Toastee0/ggml) - Enhanced GGML library with RISC-V optimizations
 - [reCamera ncurses 6.4](https://github.com/Toastee0/ncurses) - Modern terminal interface
 - [reCamera nano editor](https://github.com/Toastee0/nano) - Text editing capabilities
 - Standard reCamera development workflow
 
 For complete reCamera development setup, place this repository in your reCamera development environment folder alongside the SDK.
+
+**Note**: This fork uses a custom ggml submodule instead of the embedded ggml directory, allowing for independent RISC-V optimization development.
 
 
 ## Memory usage
